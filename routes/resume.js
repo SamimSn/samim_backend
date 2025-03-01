@@ -1,5 +1,4 @@
 const express = require("express");
-const { authenticate } = require("../middleware/auth");
 const prisma = require("../prisma");
 
 const { createResumeSchema, updateResumeSchema } = require("../schemas/resume");
@@ -10,7 +9,6 @@ const router = express.Router();
 // Create new resume
 router.post(
   "/",
-  authenticate,
   validateRequest(createResumeSchema),
   async (req, res) => {
     try {
@@ -47,7 +45,7 @@ router.post(
 );
 
 // Get all user's resumes
-router.get("/", authenticate, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const resumes = await prisma.resume.findMany({
       where: { userId: req.user.id },
@@ -65,7 +63,7 @@ router.get("/", authenticate, async (req, res) => {
 });
 
 // Get single resume
-router.get("/:id", authenticate, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const resume = await prisma.resume.findUnique({
       where: { id: parseInt(req.params.id) },
@@ -89,7 +87,7 @@ router.get("/:id", authenticate, async (req, res) => {
 // Update resume
 router.put(
   "/:id",
-  authenticate,
+
   validateRequest(updateResumeSchema),
   async (req, res) => {
     try {
@@ -161,7 +159,7 @@ router.put(
 );
 
 // Delete resume
-router.delete("/:id", authenticate, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const resume = await prisma.resume.findUnique({
       where: { id: parseInt(req.params.id) },
